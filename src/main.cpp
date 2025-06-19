@@ -18,6 +18,8 @@ int main()
     msp.getData(MSP_NAME);
     std::cout << "\n";
     msp.getData(MSP_ATTITUDE);
+    std::cout << "\n";
+    msp.getData(MSP_VTX_CONFIG);
 
 
     return 0;

@@ -2,10 +2,11 @@
 #include <string>
 #include <unordered_map>
 
-namespace MSP {
+namespace MSP 
+{
     struct CodeInfo 
     {
-    std::string name;
+        std::string name;
     };
 
     const std::unordered_map<int, CodeInfo> mspCodes = {

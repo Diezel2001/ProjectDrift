@@ -1,6 +1,7 @@
 #include "msp.h"
 #include "msp_protocol_betaflight.h"
-#include "msp_codes.hpp"
+#include "msp_codes.h"
+#include "msp_vtx.h"
 
 #include "serial.h"
 
@@ -149,15 +150,6 @@ namespace MSP {
 
         switch (cmd)
         {
-            // === Core Information ===
-            case MSP_API_VERSION:               // Get API version
-            case MSP_FC_VARIANT:                // Get flight controller variant
-            case MSP_FC_VERSION:                // Get flight controller version
-            case MSP_BOARD_INFO:                // Get board information
-            case MSP_BUILD_INFO:                // Get build information
-                break;
-
-            // === Name ===
             case MSP_NAME:                      // Get board name
             {
                 std::vector<uint8_t> result = extractPerByte(count, buff);
@@ -183,9 +175,6 @@ namespace MSP {
             case MSP_LED_STRIP_CONFIG:          // Get LED strip configuration
             case MSP_RSSI_CONFIG:               // Get RSSI configuration
             case MSP_ADJUSTMENT_RANGES:         // Get adjustment ranges
-            case MSP_CF_SERIAL_CONFIG:          // Get serial config
-            case MSP_VOLTAGE_METER_CONFIG:      // Get voltage meter config
-            case MSP_SONAR_ALTITUDE:            // Get sonar altitude
             case MSP_PID_CONTROLLER:            // Get PID controller
             case MSP_ARMING_CONFIG:             // Get arming configuration
                 break;
@@ -202,7 +191,19 @@ namespace MSP {
             case MSP_OSD_CONFIG:                // Get OSD config
             case MSP_OSD_CHAR_READ:             // Read OSD chars
             case MSP_VTX_CONFIG:                // Get VTX config
+            {
+                std::vector<uint8_t> result = extractPerByte(count, buff);
+                vtxconfig config{result[0], result[1], result[2], result[3], result[4],
+                                static_cast<uint16_t>((static_cast<uint16_t>(result[6]) << 8) | result[5]),
+                                result[7], result[8],
+                                static_cast<uint16_t>((static_cast<uint16_t>(result[10]) << 8) | result[9]),
+                                result[11], result[12], result[13], result[14],
+                                result[15], result[16], result[17], result[18]};
+
+                printVTXConfig(config);
+                std::cout << "\n";
                 break;
+            }
 
             // === Betaflight Additional Getters (90–99) ===
             case MSP_ADVANCED_CONFIG:           // Get advanced config
@@ -267,40 +268,11 @@ namespace MSP {
             case MSP_MOTOR_TELEMETRY:           // Get motor telemetry
                 break;
 
-            // === Simplified Tuning (Getters Only) ===
-            case MSP_SIMPLIFIED_TUNING:
-            case MSP_CALCULATE_SIMPLIFIED_PID:
-            case MSP_CALCULATE_SIMPLIFIED_GYRO:
-            case MSP_CALCULATE_SIMPLIFIED_DTERM:
-            case MSP_VALIDATE_SIMPLIFIED_TUNING:
-                break;
-
             // === Additional Non-MultiWii Commands (Getters Only) ===
             case MSP_STATUS_EX:
             case MSP_UID:
             case MSP_GPSSVINFO:
             case MSP_GPSSTATISTICS:
-                break;
-
-            // === OSD Specific Commands (Getters Only) ===
-            case MSP_OSD_VIDEO_CONFIG:
-            case MSP_DISPLAYPORT:
-            case MSP_BEEPER_CONFIG:
-            case MSP_TX_INFO:
-            case MSP_OSD_CANVAS:
-                break;
-
-            // === Misc and Special Getters ===
-            case MSP_ACC_TRIM:
-            case MSP_SERVO_MIX_RULES:
-            case MSP_RTC:
-            case MSP_DEBUGMSG:
-            case MSP_DEBUG:
-                break;
-
-            // === MSP v2 Indicator (technically not a getter, but included for handling) ===
-            case MSP_V2_FRAME:
-                break;
 
             default:
                 // Unknown or unsupported command
