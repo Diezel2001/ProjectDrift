@@ -1,6 +1,15 @@
 # 🦉 ProjectOwl
 
-A lightweight serial communication tool built in C++.
+Project Owl is a research-oriented codebase for drone system development. It contains experimental implementations, prototyping tools and libraries. This project serves as a foundation for ongoing exploration in aerial robotics and embedded systems.
+
+Current Features:
+- MSP Library for RPI to Flight Controller comms
+
+Future Features:
+- autonomous flight via (inav waypoints)
+- inter drone comms via (lora)
+- sensor integration
+- Drone Control systems
 
 ---
 
