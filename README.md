@@ -1,25 +1,37 @@
-## License
+# 🦉 ProjectOwl
 
-This project is licensed under the [MIT License](./LICENSE) — © 2025 Diether Ong
+A lightweight serial communication tool built in C++.
 
+---
 
+## 📄 License
 
-## How to Build
+This project is licensed under the **MIT License** — © 2025 Diether Ong
 
-1. edit project_config.json with correct info (port, baudrate, etc.)
+---
 
-Note: to check port you can use command 
-    -> ls /dev/tty*
+## ⚙️ How to Build
 
+1. **Configure the project**
 
-2. run build.sh
+   Edit the `project_config.json` file and update the values with the appropriate settings:
 
+   - `port`: Serial port to connect to  
+   - `baudrate`: Communication speed  
+   - Any other relevant settings
 
-3. executable would be in /build/deploy folder, you can run it via terminal
-    -> ./run_app.sh
-    or
-    -> ./build/deploy/projectowl
+   > 💡 To list available serial ports:
+   > ```bash
+   > ls /dev/tty*
+   > ```
 
+2. **Build the project**
 
-4. projectowl executable is from main.cpp
+   Run the provided build script:
+   ```bash
+   ./build.sh
 
+3. **Run Main Application**
+   Run the provided build script:
+   ```bash
+   ./run_app.sh
