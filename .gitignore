@@ -1,0 +1,7 @@
+build/
+deploy/
+*.o
+*.obj
+*.exe
+*.out
+*.log
