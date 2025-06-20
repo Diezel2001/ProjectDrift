@@ -3,6 +3,8 @@
 #include <cerrno>
 #include <cstring>
 #include <cstdint>
+#include <chrono>
+#include <thread>
 
 serial::serial(const std::string portName, int baudrate)
 {
@@ -11,6 +13,8 @@ serial::serial(const std::string portName, int baudrate)
     {
         std::cerr << "Failed to open serial port\n";
     }
+    m_portName = portName;
+    m_baudrate = baudrate;
 }
 
 serial::serial()
@@ -20,7 +24,7 @@ serial::serial()
 
 serial::~serial()
 {
-    closeSerial(fd);
+    closeSerial();
 }
 
 int serial::openSerial(const std::string portName, int baudrate) 
@@ -67,7 +71,7 @@ int serial::openSerial(const std::string portName, int baudrate)
     return fd;
 }
 
-void serial::closeSerial(int fd) {
+void serial::closeSerial() {
     close(fd);
 }
 
@@ -107,4 +111,12 @@ ssize_t serial::readSerial(void *buf, size_t count)
         throw std::runtime_error("Invalid file descriptor, opening of serial port may have failed");
     }
     return read(fd, buf, count);
+}
+
+void serial::safeReset()
+{
+    closeSerial();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    openSerial(m_portName, m_baudrate);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 }

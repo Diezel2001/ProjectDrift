@@ -1,7 +1,6 @@
 #include "msp.h"
 #include "msp_protocol_betaflight.h"
 #include "msp_codes.h"
-#include "msp_vtx.h"
 
 #include "serial.h"
 
@@ -10,16 +9,18 @@
 #include <cstdint>
 #include <unistd.h>
 #include <cstring>
+#include <chrono>
+#include <thread>
 
 #define DEFAULT_BAUD 115200
 
 namespace
 {
     // Extracts each byte individually as uint8_t
-    std::vector<uint8_t> extractPerByte(ssize_t count, char* buff)
+    MSP::Payload extractPerByte(ssize_t count, char* buff)
     {
         size_t payload_len = count - 6;  // exclude header(3), size(1), cmd(1), checksum(1)
-        std::vector<uint8_t> payload(buff + 5, buff + 5 + payload_len);
+        MSP::Payload payload(buff + 5, buff + 5 + payload_len);
 
         // for (size_t i = 0; i < payload.size(); ++i) {
         //     std::cout << "Byte[" << i << "] = 0x"
@@ -58,7 +59,7 @@ namespace MSP {
     }
 
     void msp::sendCmd(uint8_t data_length, uint8_t code, const std::vector<uint8_t>& data) {
-        std::vector<uint8_t> packet;
+        Payload packet;
 
         packet.push_back('$');
         packet.push_back('M');
@@ -82,14 +83,14 @@ namespace MSP {
         }
     }
 
-    void msp::getData(uint8_t cmd)
+    Payload msp::getData(uint8_t cmd)
     {
         char buffer[MAX_RECIEVE_BUFFER];
 
         sendCmd(0, cmd, {});
         ssize_t bytesRead_count = m_serial->readSerial(buffer, sizeof(buffer) - 1);
 
-        processData(cmd, bytesRead_count, buffer);
+        return processData(cmd, bytesRead_count, buffer);
 
     }
 
@@ -136,7 +137,7 @@ namespace MSP {
         return true;
     }
 
-    void msp::processData(uint8_t cmd, ssize_t count, char* buff)
+    Payload msp::processData(uint8_t cmd, ssize_t count, char* buff)
     {
         
         if (checkMspResponse(buff, count))
@@ -152,74 +153,14 @@ namespace MSP {
         {
             case MSP_NAME:                      // Get board name
             {
-                std::vector<uint8_t> result = extractPerByte(count, buff);
-
-                std::cout << "Drone Name (craft name): ";
-                for (size_t i = 0; i < result.size(); ++i)
-                {
-                    std::cout << result[i];
-                }
-                std::cout << "\n";
-                break;
+                Payload result = extractPerByte(count, buff);
+                return result;
             }
-
-            // === Cleanflight Original Features (Getters Only) ===
-            case MSP_BATTERY_CONFIG:            // Get battery configuration
-            case MSP_MODE_RANGES:               // Get mode ranges
-            case MSP_FEATURE_CONFIG:            // Get feature configuration
-            case MSP_BOARD_ALIGNMENT_CONFIG:    // Get board alignment
-            case MSP_CURRENT_METER_CONFIG:      // Get current meter configuration
-            case MSP_MIXER_CONFIG:              // Get mixer configuration
-            case MSP_RX_CONFIG:                 // Get RX configuration
-            case MSP_LED_COLORS:                // Get LED colors
-            case MSP_LED_STRIP_CONFIG:          // Get LED strip configuration
-            case MSP_RSSI_CONFIG:               // Get RSSI configuration
-            case MSP_ADJUSTMENT_RANGES:         // Get adjustment ranges
-            case MSP_PID_CONTROLLER:            // Get PID controller
-            case MSP_ARMING_CONFIG:             // Get arming configuration
-                break;
-
-            // === Baseflight Commands (Getters Only) ===
-            case MSP_RX_MAP:                    // Get RX map
-            case MSP_DATAFLASH_SUMMARY:         // Get dataflash summary
-            case MSP_DATAFLASH_READ:            // Read dataflash
-            case MSP_FAILSAFE_CONFIG:           // Get failsafe config
-            case MSP_RXFAIL_CONFIG:             // Get RX failsafe
-            case MSP_SDCARD_SUMMARY:            // Get SD card summary
-            case MSP_BLACKBOX_CONFIG:           // Get blackbox config
-            case MSP_TRANSPONDER_CONFIG:        // Get transponder config
-            case MSP_OSD_CONFIG:                // Get OSD config
-            case MSP_OSD_CHAR_READ:             // Read OSD chars
             case MSP_VTX_CONFIG:                // Get VTX config
             {
-                std::vector<uint8_t> result = extractPerByte(count, buff);
-                vtxconfig config{result[0], result[1], result[2], result[3], result[4],
-                                static_cast<uint16_t>((static_cast<uint16_t>(result[6]) << 8) | result[5]),
-                                result[7], result[8],
-                                static_cast<uint16_t>((static_cast<uint16_t>(result[10]) << 8) | result[9]),
-                                result[11], result[12], result[13], result[14],
-                                result[15], result[16], result[17], result[18]};
-
-                printVTXConfig(config);
-                std::cout << "\n";
-                break;
+                Payload result = extractPerByte(count, buff);
+                return result;
             }
-
-            // === Betaflight Additional Getters (90–99) ===
-            case MSP_ADVANCED_CONFIG:           // Get advanced config
-            case MSP_FILTER_CONFIG:             // Get filter config
-            case MSP_PID_ADVANCED:              // Get advanced PID
-            case MSP_SENSOR_CONFIG:             // Get sensor config
-                break;
-
-            // === Multiwii Original (101–139) ===
-            case MSP_STATUS:                    // Get system status
-            case MSP_RAW_IMU:                   // Get raw IMU
-            case MSP_SERVO:                     // Get servo data
-            case MSP_MOTOR:                     // Get motor data
-            case MSP_RC:                        // Get RC values
-            case MSP_RAW_GPS:                   // Get raw GPS
-            case MSP_COMP_GPS:                  // Get GPS comparison
             case MSP_ATTITUDE:                  // Get attitude
             {
                 std::vector<uint16_t> result = extractPerTwoBytes(count, buff);
@@ -239,46 +180,100 @@ namespace MSP {
                 }
                 break;
             }
-            case MSP_ALTITUDE:                  // Get altitude
-            case MSP_ANALOG:                    // Get analog readings
-            case MSP_RC_TUNING:                 // Get RC tuning
-            case MSP_PID:                       // Get PIDs
-            case MSP_BOXNAMES:                  // Get mode names
-            case MSP_PIDNAMES:                  // Get PID names
-            case MSP_WP:                        // Get waypoint
-            case MSP_BOXIDS:                    // Get box IDs
-            case MSP_SERVO_CONFIGURATIONS:      // Get servo configs
-            case MSP_NAV_STATUS:                // Get nav status
-            case MSP_NAV_CONFIG:                // Get nav config
-            case MSP_MOTOR_3D_CONFIG:           // Get 3D motor config
-            case MSP_RC_DEADBAND:               // Get deadband
-            case MSP_SENSOR_ALIGNMENT:          // Get sensor alignment
-            case MSP_LED_STRIP_MODECOLOR:       // Get LED strip mode-color
-            case MSP_VOLTAGE_METERS:            // Get voltage meter data
-            case MSP_CURRENT_METERS:            // Get current meter data
-            case MSP_BATTERY_STATE:             // Get battery state
-            case MSP_MOTOR_CONFIG:              // Get motor config
-            case MSP_GPS_CONFIG:                // Get GPS config
-            case MSP_COMPASS_CONFIG:            // Get compass config
-            case MSP_ESC_SENSOR_DATA:           // Get ESC sensor data
-            case MSP_GPS_RESCUE:                // Get GPS rescue params
-            case MSP_GPS_RESCUE_PIDS:           // Get GPS rescue PID
-            case MSP_VTXTABLE_BAND:             // Get VTX table band
-            case MSP_VTXTABLE_POWERLEVEL:       // Get VTX power levels
-            case MSP_MOTOR_TELEMETRY:           // Get motor telemetry
-                break;
-
-            // === Additional Non-MultiWii Commands (Getters Only) ===
-            case MSP_STATUS_EX:
-            case MSP_UID:
-            case MSP_GPSSVINFO:
-            case MSP_GPSSTATISTICS:
-
             default:
-                // Unknown or unsupported command
-                break;
+                
+                return Payload();
         }
+        return Payload();
 
+    }
+
+    void msp::getName()
+    {
+        Payload result = getData(MSP_NAME);
+        std::cout << "Drone Name (craft name): ";
+        for (size_t i = 0; i < result.size(); ++i)
+        {
+            std::cout << result[i];
+        }
+        std::cout << "\n";
+    }
+
+    vtxConfigIn msp::getVtx()
+    {
+        Payload result = getData(MSP_VTX_CONFIG);
+        vtxConfigIn config(result);
+
+        // printVTXConfigIn(config);
+        std::cout << "\n";
+        return config;
+    }
+
+    void msp::setVtx(uint8_t band, uint8_t channel) {
+        uint16_t freqEncoded = ((band - 1) * 8) + (channel - 1);
+
+        vtxConfigIn config = getVtx();
+
+        bool match = (config.vtxBand == band) && (config.vtxChannel == channel);
+        Payload payload = 
+        {
+            static_cast<uint8_t>(freqEncoded & 0xFF),        // low byte
+            static_cast<uint8_t>((freqEncoded >> 8) & 0xFF), // high byte
+            config.vtxPower,
+        };
+
+        while (! match)
+        {
+            sendCmd(payload.size(), MSP_SET_VTX_CONFIG, payload);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            sendCmd(0, MSP_EEPROM_WRITE, {}); // Save to flash
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            m_serial->safeReset();
+
+            config = getVtx();
+            match = (config.vtxBand == band) && (config.vtxChannel == channel);
+
+            std::cout << "Checking match: "
+            << "config.vtxBand (" << +config.vtxBand << ") == band (" << +band << "), "
+            << "config.vtxChannel (" << +config.vtxChannel << ") == channel (" << +channel << ") => "
+            << std::boolalpha << match << std::endl;
+
+            if(! match)
+                std::cout << "Sent vtx config does not match current vtx config: resending config" << std::endl;
+        }
+    }
+    
+    void msp::setVtx(uint16_t freq)
+    {
+        vtxConfigIn config = getVtx();
+
+        bool match = (config.vtxFreq == freq);
+        Payload payload = 
+        {
+            static_cast<uint8_t>(freq & 0xFF),        // low byte
+            static_cast<uint8_t>((freq >> 8) & 0xFF), // high byte
+            config.vtxPower,
+        };
+
+        while (! match)
+        {
+            sendCmd(payload.size(), MSP_SET_VTX_CONFIG, payload);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            sendCmd(0, MSP_EEPROM_WRITE, {}); // Save to flash
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            m_serial->safeReset();
+
+            config = getVtx();
+            match = (config.vtxFreq == freq);
+
+            std::cout << "Checking match: "
+            << "config.vtxBand (" << +config.vtxBand << ") == band (" << +band << "), "
+            << "config.vtxChannel (" << +config.vtxChannel << ") == channel (" << +channel << ") => "
+            << std::boolalpha << match << std::endl;
+
+            if(! match)
+                std::cout << "Sent vtx config does not match current vtx config: resending config" << std::endl;
+        }
     }
 
 }

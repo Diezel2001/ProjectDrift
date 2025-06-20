@@ -1,6 +1,7 @@
 #pragma once
 
 #include "msp_protocol_betaflight.h"
+#include "msp_vtx.h"
 
 #include "serial.h"
 
@@ -12,6 +13,8 @@
 #define MAX_RECIEVE_BUFFER 50
 
 namespace MSP {
+    using Payload = std::vector<uint8_t>;
+
     class msp
     {
     public:
@@ -19,19 +22,20 @@ namespace MSP {
         msp();
 
         void sendCmd(uint8_t data_length, uint8_t code, const std::vector<uint8_t>& data);
-        void getData(uint8_t cmd);
+        Payload getData(uint8_t cmd);
 
-        void processData(uint8_t cmd, ssize_t count, char* buff);
+        Payload processData(uint8_t cmd, ssize_t count, char* buff);
         bool checkMspResponse(char* buff, ssize_t count);
+
+        vtxConfigIn getVtx();
+        void setVtx(uint8_t band, uint8_t channel);
+        void setVtx(uint16_t freq);
+
+        void getName();
 
     private:
         serial* m_serial;
     };
 
-    struct mspData
-    {
-        uint8_t* payload;
-        size_t* payload_len;
-    };
 
 }
