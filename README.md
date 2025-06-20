@@ -23,7 +23,7 @@ This project is licensed under the **MIT License** — © 2025 Diether Ong
 
 1. **Configure the project**
 
-   Edit the `project_config.json` file and update the values with the appropriate settings:
+   Edit the `src/project_config.json` file and update the values with the appropriate settings:
 
    - `port`: Serial port to connect to  
    - `baudrate`: Communication speed  
@@ -34,13 +34,30 @@ This project is licensed under the **MIT License** — © 2025 Diether Ong
    > ls /dev/tty*
    > ```
 
-2. **Build the project**
+2. **Setup the project**
+
+    Run the provided setup script together with current architecture (posix/pi/zero):
+   ```bash
+   ./setup.sh posix
+   #or
+   ./setup.sh pi
+   #or
+   ./setup.sh zero
+   ```
+   > 💡 Note: Architecture corresponds to where your running the binaries
+   > posix -> if running on linux pc
+   > pi    -> if running on raspberry pi 4B
+   > zero  -> if running on raspberry pi zero 2 W
+
+3. **Build the project**
 
    Run the provided build script:
    ```bash
    ./build.sh
+   ```
 
 3. **Run Main Application**
-   Run the provided build script:
+   Run the provided run app script:
    ```bash
    ./run_app.sh
+   ```

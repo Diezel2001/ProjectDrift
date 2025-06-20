@@ -5,3 +5,4 @@ deploy/
 *.exe
 *.out
 *.log
+*.last_target

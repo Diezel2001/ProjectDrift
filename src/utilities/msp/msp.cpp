@@ -267,8 +267,7 @@ namespace MSP {
             match = (config.vtxFreq == freq);
 
             std::cout << "Checking match: "
-            << "config.vtxBand (" << +config.vtxBand << ") == band (" << +band << "), "
-            << "config.vtxChannel (" << +config.vtxChannel << ") == channel (" << +channel << ") => "
+            << "config.vtxFreq (" << +config.vtxFreq << ") == freq (" << +freq << "), "
             << std::boolalpha << match << std::endl;
 
             if(! match)
