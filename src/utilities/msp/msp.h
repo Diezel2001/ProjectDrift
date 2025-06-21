@@ -20,7 +20,8 @@ namespace MSP {
     {
     public:
         msp(serial &mySerial);
-        msp();
+        msp(const std::string portName, int baudrate);
+        ~msp();
 
         void sendCmd(uint8_t data_length, uint8_t code, const std::vector<uint8_t>& data);
         Payload getData(uint8_t cmd);

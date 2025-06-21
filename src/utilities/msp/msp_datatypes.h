@@ -91,18 +91,6 @@ namespace MSP
             padding4 = result[18];
         }
     };
-
-    struct vtxConfigOut
-    {
-        uint8_t vtxBand;
-        uint8_t vtxChannel;
-        uint8_t vtxPower;
-        uint8_t vtxStatus;
-        uint16_t vtxFreq;
-        uint8_t vtxDeviceReady;
-        uint8_t vtxLowPowerDisarm;
-        uint16_t vtxPitFreq;
-    };
     
     inline void printVTXConfigIn(const vtxConfigIn& cfg) {
         std::cout << "VTX Config:" << std::endl;

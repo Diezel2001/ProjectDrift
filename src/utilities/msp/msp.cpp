@@ -59,6 +59,15 @@ namespace MSP {
         m_serial = &mySerial;
     }
 
+    msp::msp(const std::string portName, int baudrate)
+    {
+        m_serial = new serial(portName, baudrate);
+    }
+    msp::~msp()
+    {
+        free(m_serial);
+    }
+
     void msp::sendCmd(uint8_t data_length, uint8_t code, const std::vector<uint8_t>& data) {
         Payload packet;
 
