@@ -15,11 +15,11 @@ int main()
     MSP::msp msp(fc_uart);
 
 
-    msp.getData(MSP_NAME);
+    msp.sendMspCmd(MSP_NAME);
     std::cout << "\n";
-    msp.getData(MSP_ATTITUDE);
+    msp.sendMspCmd(MSP_ATTITUDE);
     std::cout << "\n";
-    msp.getData(MSP_VTX_CONFIG);
+    msp.sendMspCmd(MSP_VTX_CONFIG);
 
 
     return 0;

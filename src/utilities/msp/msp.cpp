@@ -94,6 +94,16 @@ namespace MSP {
 
     }
 
+    std::any msp::sendMspCmd(uint8_t code, const std::any& data)
+    {
+        return mspHandlers[getCommandName(code)]({data});
+    }
+
+    std::any msp::sendMspCmd(uint8_t code)
+    {
+        return mspHandlers[getCommandName(code)]({});
+    }
+
     bool msp::checkMspResponse(char* buff, ssize_t count)
     {
         if (count < 6)
@@ -163,22 +173,8 @@ namespace MSP {
             }
             case MSP_ATTITUDE:                  // Get attitude
             {
-                std::vector<uint16_t> result = extractPerTwoBytes(count, buff);
-
-                for (size_t i = 0; i < result.size(); ++i) {
-                    // Cast to signed 16-bit
-                    int16_t signedValue = static_cast<int16_t>(result[i]);
-                    float value;
-
-                    // Example: divide first two by 10.0 like angx, angy
-                    if (i == 0 || i == 1)
-                        value = static_cast<float>(signedValue) / 10.0f;
-                    else
-                        value = static_cast<float>(signedValue); // no division for heading or others
-
-                    std::cout << "Value[" << i << "] = " << value << std::endl;
-                }
-                break;
+                std::vector<uint8_t> result = extractPerByte(count, buff);
+                return result;
             }
             default:
                 
@@ -188,7 +184,7 @@ namespace MSP {
 
     }
 
-    void msp::getName()
+    std::string msp::getName()
     {
         Payload result = getData(MSP_NAME);
         std::cout << "Drone Name (craft name): ";
@@ -197,6 +193,7 @@ namespace MSP {
             std::cout << result[i];
         }
         std::cout << "\n";
+        return std::string(result.begin(), result.end());
     }
 
     vtxConfigIn msp::getVtx()
@@ -204,7 +201,7 @@ namespace MSP {
         Payload result = getData(MSP_VTX_CONFIG);
         vtxConfigIn config(result);
 
-        // printVTXConfigIn(config);
+        printVTXConfigIn(config);
         std::cout << "\n";
         return config;
     }
@@ -275,6 +272,32 @@ namespace MSP {
         }
     }
 
-    
+    void msp::getAttitude()
+    {
+        Payload result = getData(MSP_ATTITUDE);
+        for (size_t i = 0; i + 1 < result.size(); i += 2) {
+            // Combine two bytes into a signed 16-bit int (little-endian)
+            int16_t signedValue = static_cast<int16_t>(
+                static_cast<uint16_t>(result[i]) |
+                (static_cast<uint16_t>(result[i + 1]) << 8)
+            );
+
+            float value;
+            size_t index = i / 2;  // Convert byte index to value index
+
+            // First two values (angx, angy) are scaled
+            if (index == 0 || index == 1)
+                value = static_cast<float>(signedValue) / 10.0f;
+            else
+                value = static_cast<float>(signedValue); // e.g. heading
+
+            std::cout << "Value[" << index << "] = " << value << std::endl;
+        }
+    }
+
+    void msp::getRC()
+    {
+        Payload result = getData(MSP_RC);
+    }
 
 }
