@@ -1,4 +1,4 @@
-project(projectowl)
+project(projectDrift)
 
 add_executable(${PROJECT_NAME} main.cpp)
 

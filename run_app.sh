@@ -2,7 +2,7 @@
 
 set -e
 
-echo "Running ProjectOwl"
+echo "Running projectDrift"
 
 # Read last target from .last_target
 if [[ ! -f .last_target ]]; then
@@ -12,4 +12,4 @@ fi
 
 TARGET=$(<.last_target)
 
-./build/$TARGET/deploy/projectowl
+./build/$TARGET/deploy/projectDrift

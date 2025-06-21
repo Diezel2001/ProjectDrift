@@ -1,6 +1,6 @@
-# 🦉 ProjectOwl
+# 🦉 project DRIFT
 
-Project Owl is a research-oriented codebase for drone system development. It contains experimental implementations, prototyping tools and libraries. This project serves as a foundation for ongoing exploration in aerial robotics and embedded systems.
+Project DRIFT (Drone Reconnaissance & Intelligent Flight Technology) is a research-oriented codebase for drone system development. It contains experimental implementations, prototyping tools and libraries. This project serves as a foundation for ongoing exploration in aerial robotics and embedded systems.
 
 Current Features:
 - MSP Library for RPI to Flight Controller comms
