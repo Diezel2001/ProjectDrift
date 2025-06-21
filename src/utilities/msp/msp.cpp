@@ -1,6 +1,7 @@
 #include "msp.h"
 #include "msp_protocol_betaflight.h"
 #include "msp_codes.h"
+#include "msp_datatypes.h"
 
 #include "serial.h"
 
@@ -159,29 +160,8 @@ namespace MSP {
             std::cerr << "Invalid MSP frame.\n";
         }
 
-        switch (cmd)
-        {
-            case MSP_NAME:                      // Get board name
-            {
-                Payload result = extractPerByte(count, buff);
-                return result;
-            }
-            case MSP_VTX_CONFIG:                // Get VTX config
-            {
-                Payload result = extractPerByte(count, buff);
-                return result;
-            }
-            case MSP_ATTITUDE:                  // Get attitude
-            {
-                std::vector<uint8_t> result = extractPerByte(count, buff);
-                return result;
-            }
-            default:
-                
-                return Payload();
-        }
+        Payload result = extractPerByte(count, buff);
         return Payload();
-
     }
 
     std::string msp::getName()
@@ -200,7 +180,6 @@ namespace MSP {
     {
         Payload result = getData(MSP_VTX_CONFIG);
         vtxConfigIn config(result);
-
         printVTXConfigIn(config);
         std::cout << "\n";
         return config;
@@ -295,9 +274,45 @@ namespace MSP {
         }
     }
 
-    void msp::getRC()
+    rcChannelData msp::getRC()
     {
+        std::vector<uint16_t> values;
         Payload result = getData(MSP_RC);
+        for (size_t i = 0; i + 1 < result.size(); i += 2) {
+            // Combine two bytes into an unsigned 16-bit int (little-endian)
+            uint16_t value = static_cast<uint16_t>(result[i]) |
+                                (static_cast<uint16_t>(result[i + 1]) << 8);
+
+            size_t index = i / 2;  // Convert byte index to value index
+
+            std::cout << "Value[" << index << "] = " << value << std::endl;
+
+            values.push_back(value);
+        }
+        rcChannelData rcValues(values);
+        return rcValues;
+    }
+
+    imuData msp::getRawIMU()
+    {
+        std::vector<float> values;
+        Payload result = getData(MSP_RAW_IMU);
+        for (size_t i = 0; i + 1 < result.size(); i += 2) {
+            // Combine two bytes into a signed 16-bit int (little-endian)
+            int16_t signedValue = static_cast<int16_t>(
+                static_cast<uint16_t>(result[i]) |
+                (static_cast<uint16_t>(result[i + 1]) << 8)
+            );
+
+            float value;
+            size_t index = i / 2;  // Convert byte index to value index
+
+            value = static_cast<float>(signedValue); // e.g. heading
+            std::cout << "Value[" << index << "] = " << value << std::endl;
+            values.push_back(value);
+        }
+        imuData imuValues(values);
+        return imuValues;
     }
 
 }

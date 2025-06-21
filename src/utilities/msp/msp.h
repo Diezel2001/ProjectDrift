@@ -1,7 +1,7 @@
 #pragma once
 
 #include "msp_protocol_betaflight.h"
-#include "msp_vtx.h"
+#include "msp_datatypes.h"
 
 #include "serial.h"
 
@@ -38,8 +38,9 @@ namespace MSP {
         void setVtx(uint16_t freq);
 
         void getAttitude();
-        void getRC();
+        rcChannelData getRC();
 
+        imuData getRawIMU();
     
     private:
         serial* m_serial;
@@ -67,8 +68,10 @@ namespace MSP {
                 return {};
             }},
             { "MSP_RC", [=](std::vector<std::any> args) -> std::any {
-                getRC();
-                return {};
+                return getRC();
+            }},
+            { "MSP_RAW_IMU", [=](std::vector<std::any> args) -> std::any {
+                return getRawIMU();
             }},
         };
     };

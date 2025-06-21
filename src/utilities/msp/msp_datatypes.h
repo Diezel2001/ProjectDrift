@@ -6,6 +6,50 @@
 
 namespace MSP 
 {
+    struct rcChannelData
+    {
+        uint16_t roll;
+        uint16_t pitch;
+        uint16_t yaw;
+        uint16_t throttle;
+        uint16_t aux4;
+
+        inline rcChannelData(const std::vector<uint16_t>& result)
+        {
+            roll = result[0];
+            pitch = result[1];
+            yaw = result[2];
+            throttle = result[3];
+            aux4 = result[4];
+        }
+    };
+
+    struct imuData
+    {
+        float accel_x;
+        float accel_y;
+        float accel_z;
+        float gyro_x;
+        float gyro_y;
+        float gyro_z;
+        float mag_x;
+        float mag_y;
+        float mag_z;
+
+        inline imuData(const std::vector<float>& result)
+        {
+            accel_x = result[0];
+            accel_y = result[1];
+            accel_z = result[2];
+            gyro_x = result[3];
+            gyro_y = result[4];
+            gyro_z = result[5];
+            mag_x = result[6];
+            mag_y = result[7];
+            mag_z = result[8];
+        }
+    };
+
     struct vtxConfigIn
     {
         uint8_t vtxType;
