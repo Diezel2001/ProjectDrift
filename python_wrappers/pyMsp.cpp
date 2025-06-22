@@ -26,7 +26,8 @@ PYBIND11_MODULE(pyMsp, m) {
         .def("setVtx", py::overload_cast<uint16_t>(&msp::setVtx))
         .def("getAttitude", &msp::getAttitude)
         .def("getRC", &msp::getRC)
-        .def("getRawIMU", &msp::getRawIMU);
+        .def("getRawIMU", &msp::getRawIMU)
+        .def("getAnalogData", &msp::getAnalogData);
 
     py::class_<vtxConfigIn>(m, "VTXConfig")
         .def(py::init<const std::vector<uint8_t>&>())  // enable construction from Python
@@ -67,5 +68,12 @@ PYBIND11_MODULE(pyMsp, m) {
         .def_readwrite("mag_x", &imuData::mag_x)
         .def_readwrite("mag_y", &imuData::mag_y)
         .def_readwrite("mag_z", &imuData::mag_z);
+
+    py::class_<analogData>(m, "AnalogData")
+        .def(py::init<const std::vector<uint8_t>&>())  // default constructor
+        .def_readwrite("batteryVoltage", &analogData::batteryVoltage)
+        .def_readwrite("mAhDrawn", &analogData::mAhDrawn)
+        .def_readwrite("rssi", &analogData::rssi)
+        .def_readwrite("amperage", &analogData::amperage);
 }
 

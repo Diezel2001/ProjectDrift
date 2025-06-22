@@ -63,6 +63,13 @@
         "format": "cpp",
         "semaphore": "cpp",
         "stop_token": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "barrier": "cpp",
+        "complex": "cpp",
+        "condition_variable": "cpp",
+        "list": "cpp",
+        "mutex": "cpp",
+        "cinttypes": "cpp",
+        "typeindex": "cpp"
     }
 }
