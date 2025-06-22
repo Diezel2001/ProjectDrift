@@ -1,6 +1,27 @@
 cmake_minimum_required(VERSION 3.16)
 project(projectDrift)
 
+# Enable sanitizers if requested
+option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
+option(ENABLE_UBSAN "Enable UndefinedBehaviorSanitizer" OFF)
+option(ENABLE_TSAN "Enable ThreadSanitizer" OFF)
+
+if (ENABLE_ASAN)
+    message(STATUS "AddressSanitizer enabled")
+    set(SANITIZER_FLAGS "-fsanitize=address -fno-omit-frame-pointer")
+elseif (ENABLE_UBSAN)
+    message(STATUS "UndefinedBehaviorSanitizer enabled")
+    set(SANITIZER_FLAGS "-fsanitize=undefined -fno-omit-frame-pointer")
+elseif (ENABLE_TSAN)
+    message(STATUS "ThreadSanitizer enabled")
+    set(SANITIZER_FLAGS "-fsanitize=thread -fno-omit-frame-pointer")
+endif()
+
+if(SANITIZER_FLAGS)
+    add_compile_options(${SANITIZER_FLAGS})
+    add_link_options(${SANITIZER_FLAGS})
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 message(STATUS "pybind11_add_module available!")
 

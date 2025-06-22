@@ -5,6 +5,7 @@ pybind11_add_module(${PROJECT_NAME} pyMsp.cpp)
 
 target_sources(${PROJECT_NAME} PRIVATE 
     ${CMAKE_SOURCE_DIR}/src/utilities/msp/msp.cpp
+    ${CMAKE_SOURCE_DIR}/src/utilities/msp/msp_datatypes.cpp
     ${CMAKE_SOURCE_DIR}/src/utilities/serial/serial.cpp
 )  # your actual code
 

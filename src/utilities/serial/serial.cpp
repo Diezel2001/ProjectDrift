@@ -84,7 +84,7 @@ bool serial::safeWrite(const uint8_t* data, size_t size)
 {
     if (fd < 0) 
     {
-        // std::cerr << "Invalid file descriptor, opening of serial port may have failed\n";
+        std::cerr << "Invalid safeWrite failed\n";
         throw std::runtime_error("Invalid file descriptor, opening of serial port may have failed");
         return false;
     }
@@ -107,7 +107,7 @@ ssize_t serial::readSerial(void *buf, size_t count)
 {
     if (fd < 0) 
     {
-        // std::cerr << "Invalid file descriptor, opening of serial port may have failed\n";
+        std::cerr << "readSerial failed\n";
         throw std::runtime_error("Invalid file descriptor, opening of serial port may have failed");
     }
     return read(fd, buf, count);

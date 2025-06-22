@@ -19,7 +19,6 @@ namespace MSP {
     class msp
     {
     public:
-        msp(serial &mySerial);
         msp(const std::string portName, int baudrate);
         ~msp();
 

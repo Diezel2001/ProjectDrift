@@ -35,9 +35,13 @@ namespace MSP
         gyro_x = result[3];
         gyro_y = result[4];
         gyro_z = result[5];
-        mag_x = result[6];
-        mag_y = result[7];
-        mag_z = result[8];
+
+        if (result.size() != 6)
+        {
+            mag_x = result[6];
+            mag_y = result[7];
+            mag_z = result[8];
+        }
     }
 
     void imuData::print()

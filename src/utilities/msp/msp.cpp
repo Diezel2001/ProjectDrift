@@ -15,6 +15,9 @@
 
 #define DEFAULT_BAUD 115200
 
+// #define HAS_GPS
+// #define HAS_COMPASS
+
 namespace
 {
     // Extracts each byte individually as uint8_t
@@ -54,18 +57,13 @@ namespace
 }
 
 namespace MSP {
-    msp::msp(serial &mySerial)
-    {
-        m_serial = &mySerial;
-    }
-
     msp::msp(const std::string portName, int baudrate)
     {
         m_serial = new serial(portName, baudrate);
     }
     msp::~msp()
     {
-        free(m_serial);
+        delete(m_serial);
     }
 
     void msp::sendCmd(uint8_t data_length, uint8_t code, const std::vector<uint8_t>& data) {
@@ -170,7 +168,8 @@ namespace MSP {
         }
 
         Payload result = extractPerByte(count, buff);
-        return Payload();
+        std::cout << "Recieved payload is of size. " << result.size() <<"\n";
+        return result;
     }
 
     std::string msp::getName()
@@ -315,8 +314,13 @@ namespace MSP {
             float value;
             size_t index = i / 2;  // Convert byte index to value index
 
+#ifndef HAS_COMPASS
+            if(index == 7 || index == 8 || index == 9)
+            {
+                continue;
+            }
+#endif
             value = static_cast<float>(signedValue); // e.g. heading
-            std::cout << "Value[" << index << "] = " << value << std::endl;
             values.push_back(value);
         }
         imuData imuValues(values);

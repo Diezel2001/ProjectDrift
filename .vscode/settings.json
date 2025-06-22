@@ -70,6 +70,8 @@
         "list": "cpp",
         "mutex": "cpp",
         "cinttypes": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp"
     }
 }
