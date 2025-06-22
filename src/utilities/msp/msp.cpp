@@ -324,4 +324,10 @@ namespace MSP {
         return imuValues;
     }
 
+    analogData msp::getAnalogData()
+    {
+        Payload result = getData(MSP_ANALOG);
+        return analogData(result);
+    }
+
 }

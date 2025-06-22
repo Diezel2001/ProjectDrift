@@ -33,7 +33,7 @@ cd "$BUILD_DIR"
 # Only configure with CMake if not already done
 if [[ ! -f Makefile ]]; then
     echo "Running CMake configuration for target: $TARGET"
-    cmake ../.. -DCMAKE_TOOLCHAIN_FILE=../../$TOOLCHAIN_FILE
+    cmake ../.. -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_FILE
 fi
 
 # Run make

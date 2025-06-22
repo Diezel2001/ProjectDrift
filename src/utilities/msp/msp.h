@@ -42,6 +42,7 @@ namespace MSP {
         rcChannelData getRC();
 
         imuData getRawIMU();
+        analogData getAnalogData();
     
     private:
         serial* m_serial;
@@ -73,6 +74,9 @@ namespace MSP {
             }},
             { "MSP_RAW_IMU", [=](std::vector<std::any> args) -> std::any {
                 return getRawIMU();
+            }},
+            { "MSP_ANALOG", [=](std::vector<std::any> args) -> std::any {
+                return getAnalogData();
             }},
         };
     };

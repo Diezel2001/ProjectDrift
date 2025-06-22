@@ -50,6 +50,22 @@ namespace MSP
         }
     };
 
+    struct analogData
+    {
+        uint8_t batteryVoltage;
+        uint16_t mAhDrawn;
+        uint16_t rssi;
+        uint16_t amperage;
+
+        inline analogData(const std::vector<uint8_t>& result)
+        {
+            batteryVoltage = result[0];
+            mAhDrawn = (result[2] << 8) | result[1];
+            rssi = (result[4] << 8) | result[3];
+            amperage = (result[6] << 8) | result[5];
+        }
+    };
+
     struct vtxConfigIn
     {
         uint8_t vtxType;
