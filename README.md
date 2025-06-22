@@ -1,4 +1,11 @@
-# 🦉 project DRIFT
+## Table of Contents
+- [Overview](#overview)
+- [How to Build](#how-to-build)
+- [Deploy](#deploy)
+- [Python Wrapped Libraries](#python-wrapped-libraries)
+- [License](#license)
+
+## Overview
 
 Project DRIFT (Drone Reconnaissance & Intelligent Flight Technology) is a research-oriented codebase for drone system development. It contains experimental implementations, prototyping tools and libraries. This project serves as a foundation for ongoing exploration in aerial robotics and embedded systems.
 
@@ -13,13 +20,7 @@ Future Features:
 
 ---
 
-## 📄 License
-
-This project is licensed under the **MIT License** — © 2025 Diether Ong
-
----
-
-## ⚙️ How to Build
+## How to Build
 
 1. **Configure the project**
 
@@ -56,8 +57,38 @@ This project is licensed under the **MIT License** — © 2025 Diether Ong
    ./build.sh
    ```
 
-3. **Run Main Application**
+4. **Run Main Application**
    Run the provided run app script:
    ```bash
    ./run_app.sh
    ```
+
+---
+
+## deploy
+
+you can find all the compiled binaries and executables in /build/[posix|zero|pi]/deploy folder
+
+---
+
+## Python Wrapped Libraries
+
+This project includes a python wrapper that wraps c++ libraries into python library.
+
+   ### How to use
+      1. goto /pythonlibs/[your library]/
+
+      2. get .so file (example: pyMsp.cpython-312-x86_64-linux-gnu.so)
+
+      3.  simple way to use is place the .so file besides the python file you are running
+
+      4.  then you can import the library (example: import pyMsp)
+
+
+## License
+
+This project is licensed under the **MIT License** — © 2025 Diether Ong
+
+---
+
+
