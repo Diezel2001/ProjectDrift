@@ -2,6 +2,7 @@ project(msp)
 
 add_library(${PROJECT_NAME} STATIC
     msp.cpp
+    msp_datatypes.cpp
 )
 
 

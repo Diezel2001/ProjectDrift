@@ -31,6 +31,7 @@ PYBIND11_MODULE(pyMsp, m) {
 
     py::class_<vtxConfigIn>(m, "VTXConfig")
         .def(py::init<const std::vector<uint8_t>&>())  // enable construction from Python
+        .def("print", &vtxConfigIn::print)
         .def_readwrite("vtxType", &vtxConfigIn::vtxType)
         .def_readwrite("vtxBand", &vtxConfigIn::vtxBand)
         .def_readwrite("vtxChannel", &vtxConfigIn::vtxChannel)
@@ -51,6 +52,7 @@ PYBIND11_MODULE(pyMsp, m) {
 
     py::class_<rcChannelData>(m, "RCChannelData")
         .def(py::init<const std::vector<uint16_t>&>())  // default constructor
+        .def("print", &rcChannelData::print)
         .def_readwrite("roll", &rcChannelData::roll)
         .def_readwrite("pitch", &rcChannelData::pitch)
         .def_readwrite("yaw", &rcChannelData::yaw)
@@ -59,6 +61,7 @@ PYBIND11_MODULE(pyMsp, m) {
     
     py::class_<imuData>(m, "IMUData")
         .def(py::init<const std::vector<float>&>())  // default constructor
+        .def("print", &imuData::print)
         .def_readwrite("accel_x", &imuData::accel_x)
         .def_readwrite("accel_y", &imuData::accel_y)
         .def_readwrite("accel_z", &imuData::accel_z)
@@ -71,6 +74,7 @@ PYBIND11_MODULE(pyMsp, m) {
 
     py::class_<analogData>(m, "AnalogData")
         .def(py::init<const std::vector<uint8_t>&>())  // default constructor
+        .def("print", &analogData::print)
         .def_readwrite("batteryVoltage", &analogData::batteryVoltage)
         .def_readwrite("mAhDrawn", &analogData::mAhDrawn)
         .def_readwrite("rssi", &analogData::rssi)

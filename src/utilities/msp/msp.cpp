@@ -189,7 +189,6 @@ namespace MSP {
     {
         Payload result = getData(MSP_VTX_CONFIG);
         vtxConfigIn config(result);
-        printVTXConfigIn(config);
         std::cout << "\n";
         return config;
     }
