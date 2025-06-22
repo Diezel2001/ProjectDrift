@@ -7,6 +7,16 @@
 
 namespace MSP 
 {
+    nameData::nameData(const std::vector<uint8_t>& result)
+    {
+        name = std::string(result.begin(), result.end());
+    }
+
+    void nameData::print()
+    {
+        std::cout << "Drone Name (Craft Name)   : " << name << std::endl;
+    }
+
     rcChannelData::rcChannelData(const std::vector<uint16_t>& result)
     {
         roll = result[0];

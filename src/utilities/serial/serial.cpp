@@ -29,7 +29,6 @@ serial::~serial()
 
 int serial::openSerial(const std::string portName, int baudrate) 
 {
-    std::cout << portName.c_str() << std::endl;
     int fd = open(portName.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
     if (fd < 0)
     {

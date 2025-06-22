@@ -2,9 +2,18 @@
 
 #include <cstdint>
 #include <vector>
+#include <string>
 
 namespace MSP 
 {
+    struct nameData
+    {
+        std::string name;
+
+        nameData(const std::vector<uint8_t>& result);
+        void print();
+    };
+
     struct rcChannelData
     {
         uint16_t roll;

@@ -16,11 +16,10 @@ PYBIND11_MODULE(pyMsp, m) {
         .def(py::init<const std::string, int>())
         .def("sendCmd", &msp::sendCmd)
         .def("getData", &msp::getData)
-        .def("sendMspCmd", py::overload_cast<uint8_t, const std::any&>(&msp::sendMspCmd))
-        .def("sendMspCmd", py::overload_cast<uint8_t>(&msp::sendMspCmd))
         .def("processData", &msp::processData)
         .def("checkMspResponse", &msp::checkMspResponse)
         .def("getName", &msp::getName)
+        .def("setName", &msp::setName)
         .def("getVtx", &msp::getVtx)
         .def("setVtx", py::overload_cast<uint8_t, uint8_t>(&msp::setVtx))
         .def("setVtx", py::overload_cast<uint16_t>(&msp::setVtx))
@@ -28,6 +27,11 @@ PYBIND11_MODULE(pyMsp, m) {
         .def("getRC", &msp::getRC)
         .def("getRawIMU", &msp::getRawIMU)
         .def("getAnalogData", &msp::getAnalogData);
+
+    py::class_<nameData>(m, "NameData")
+        .def(py::init<const std::vector<uint8_t>&>())  // default constructor
+        .def("print", &nameData::print)
+        .def_readwrite("name", &nameData::name);
 
     py::class_<vtxConfigIn>(m, "VTXConfig")
         .def(py::init<const std::vector<uint8_t>&>())  // enable construction from Python

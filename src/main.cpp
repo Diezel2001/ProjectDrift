@@ -12,11 +12,9 @@ int main()
 
     MSP::msp msp(config.getSerialPort(), config.getBaudRate());
 
+    MSP::nameData data = msp.getName();
 
-    MSP::imuData data = msp.getRawIMU();
-
-    data.print
-();
+    data.print();
 
     return 0;
 }

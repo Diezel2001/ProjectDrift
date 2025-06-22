@@ -97,19 +97,7 @@ namespace MSP {
 
         sendCmd(0, cmd, {});
         ssize_t bytesRead_count = m_serial->readSerial(buffer, sizeof(buffer) - 1);
-
         return processData(cmd, bytesRead_count, buffer);
-
-    }
-
-    std::any msp::sendMspCmd(uint8_t code, const std::any& data)
-    {
-        return mspHandlers[getCommandName(code)]({data});
-    }
-
-    std::any msp::sendMspCmd(uint8_t code)
-    {
-        return mspHandlers[getCommandName(code)]({});
     }
 
     bool msp::checkMspResponse(char* buff, ssize_t count)
@@ -172,16 +160,32 @@ namespace MSP {
         return result;
     }
 
-    std::string msp::getName()
+    nameData msp::getName()
     {
         Payload result = getData(MSP_NAME);
-        std::cout << "Drone Name (craft name): ";
-        for (size_t i = 0; i < result.size(); ++i)
+        return nameData(result);
+    }
+
+    void msp::setName(const nameData new_name)
+    {
+        nameData current_name = msp::getName();
+
+        bool match = (current_name.name == new_name.name);
+
+        while(! match)
         {
-            std::cout << result[i];
+            sendCmd(new_name.name.length(), MSP_SET_NAME, std::vector<uint8_t>(new_name.name.begin(), new_name.name.end()));
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            sendCmd(0, MSP_EEPROM_WRITE, {}); // Save to flash
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            m_serial->safeReset();
+
+            current_name = msp::getName();
+            match = (current_name.name == new_name.name);
+
+            if(! match)
+                std::cout << "Sent new name does not match current name: resending name" << std::endl;
         }
-        std::cout << "\n";
-        return std::string(result.begin(), result.end());
     }
 
     vtxConfigIn msp::getVtx()
@@ -216,10 +220,10 @@ namespace MSP {
             config = getVtx();
             match = (config.vtxBand == band) && (config.vtxChannel == channel);
 
-            std::cout << "Checking match: "
-            << "config.vtxBand (" << +config.vtxBand << ") == band (" << +band << "), "
-            << "config.vtxChannel (" << +config.vtxChannel << ") == channel (" << +channel << ") => "
-            << std::boolalpha << match << std::endl;
+            // std::cout << "Checking match: "
+            // << "config.vtxBand (" << +config.vtxBand << ") == band (" << +band << "), "
+            // << "config.vtxChannel (" << +config.vtxChannel << ") == channel (" << +channel << ") => "
+            // << std::boolalpha << match << std::endl;
 
             if(! match)
                 std::cout << "Sent vtx config does not match current vtx config: resending config" << std::endl;
