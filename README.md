@@ -67,7 +67,7 @@ Future Features:
 
 ## deploy
 
-you can find all the compiled binaries and executables in /build/[posix|zero|pi]/deploy folder
+you can find all the compiled binaries and executables in /build/[posix|zero|pi]/[beta|inav]/deploy folder
 
 ---
 

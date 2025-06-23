@@ -4,9 +4,6 @@
 ## how to import main msp class
 > from pyMsp import msp
 
-## how to import datatype classes
-> from pyMsp import nameData
-
 ## Sample Code
 > from pyMsp import msp
 >
@@ -17,3 +14,7 @@
 > imudata = board.getimuRawData()
 > imudata.print()
 > accel_x = imudata.accel_x
+
+
+## List of Methods
+

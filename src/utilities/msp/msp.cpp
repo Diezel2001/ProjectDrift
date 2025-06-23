@@ -1,5 +1,5 @@
 #include "msp.h"
-#include "msp_protocol_betaflight.h"
+#include "msp_protocol.h"
 #include "msp_codes.h"
 #include "msp_datatypes.h"
 
@@ -166,22 +166,22 @@ namespace MSP {
         return nameData(result);
     }
 
-    void msp::setName(const nameData new_name)
+    void msp::setName(const std::string new_name)
     {
         nameData current_name = msp::getName();
 
-        bool match = (current_name.name == new_name.name);
+        bool match = (current_name.name == new_name);
 
         while(! match)
         {
-            sendCmd(new_name.name.length(), MSP_SET_NAME, std::vector<uint8_t>(new_name.name.begin(), new_name.name.end()));
+            sendCmd(new_name.length(), MSP_SET_NAME, std::vector<uint8_t>(new_name.begin(), new_name.end()));
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             sendCmd(0, MSP_EEPROM_WRITE, {}); // Save to flash
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             m_serial->safeReset();
 
             current_name = msp::getName();
-            match = (current_name.name == new_name.name);
+            match = (current_name.name == new_name);
 
             if(! match)
                 std::cout << "Sent new name does not match current name: resending name" << std::endl;

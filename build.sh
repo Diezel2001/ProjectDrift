@@ -2,19 +2,26 @@
 
 set -e
 
-# Read last target from .last_target
-if [[ ! -f .last_target ]]; then
-    echo "Error: .last_target file not found. Run ./setup.sh first."
+# Read last target_arch from .last_target_arch
+if [[ ! -f .last_target_arch ]]; then
+    echo "Error: .last_target_arch file not found. Run ./setup.sh first."
     exit 1
 fi
 
-TARGET=$(<.last_target)
+# Read last target_board from .last_target_board
+if [[ ! -f .last_target_board ]]; then
+    echo "Error: .last_target_board file not found. Run ./setup.sh first."
+    exit 1
+fi
+
+TARGET_ARCH=$(<.last_target_arch)
+TARGET_BOARD=$(<.last_target_board)
 
 # Optional second argument: make target (e.g., --clean)
 MAKE_TARGET=$1
 
-TOOLCHAIN_FILE="toolchains/toolchain_$TARGET.cmake"
-BUILD_DIR="build/$TARGET"
+TOOLCHAIN_FILE="toolchains/toolchain_$TARGET_ARCH.cmake"
+BUILD_DIR="build/$TARGET_ARCH/$TARGET_BOARD"
 
 # Check if toolchain file exists
 if [[ ! -f "$TOOLCHAIN_FILE" ]]; then
@@ -32,8 +39,9 @@ cd "$BUILD_DIR"
 
 # Only configure with CMake if not already done
 if [[ ! -f Makefile ]]; then
-    echo "Running CMake configuration for target: $TARGET"
-    cmake ../.. -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_FILE -DENABLE_ASAN=ON
+    echo "Running CMake configuration for target: $TARGET_ARCH-$TARGET_BOARD"
+    cmake ../../../ -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_FILE 
+    # -DENABLE_ASAN=ON
 fi
 
 # Run make
@@ -43,4 +51,4 @@ else
     make "${MAKE_TARGET/--/}" -j$(nproc)
 fi
 
-echo "✅ Build complete for target: $TARGET ${MAKE_TARGET:+with make target '$MAKE_TARGET'}"
+echo "✅ Build complete for target : $TARGET_ARCH-$TARGET_BOARD ${MAKE_TARGET:+with make target '$MAKE_TARGET'}"

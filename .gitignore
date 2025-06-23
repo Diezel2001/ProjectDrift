@@ -8,3 +8,4 @@ pythonlibs/
 *.log
 *.last_target
 *.so
+installedstuff.txt

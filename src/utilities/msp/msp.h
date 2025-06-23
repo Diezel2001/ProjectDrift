@@ -1,6 +1,6 @@
 #pragma once
 
-#include "msp_protocol_betaflight.h"
+#include "msp_protocol.h"
 #include "msp_datatypes.h"
 
 #include "serial.h"
@@ -29,7 +29,7 @@ namespace MSP {
         bool checkMspResponse(char* buff, ssize_t count);
 
         nameData getName();
-        void setName(const nameData new_name);
+        void setName(const std::string new_name);
 
         vtxConfigIn getVtx();
         void setVtx(uint8_t band, uint8_t channel);

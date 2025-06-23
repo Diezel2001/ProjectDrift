@@ -26,6 +26,11 @@ namespace MSP
         void print();
     };
 
+    struct statusData
+    {
+        
+    };
+
     struct imuData
     {
         float accel_x;
