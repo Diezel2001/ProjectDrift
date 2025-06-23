@@ -57,12 +57,6 @@ Future Features:
    ./build.sh
    ```
 
-4. **Run Main Application**
-   Run the provided run app script:
-   ```bash
-   ./run_app.sh
-   ```
-
 ---
 
 ## deploy

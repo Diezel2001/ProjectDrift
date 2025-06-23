@@ -25,11 +25,11 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 message(STATUS "pybind11_add_module available!")
 
-if(IS_PI_TOOLCHAIN)
-    message(STATUS "NOW USING RPI TOOLCHAIN")
-    # Find Python for cross-compilation
-    find_package(Python3 REQUIRED COMPONENTS Development)
-endif()
+# if(IS_PI_TOOLCHAIN)
+#     message(STATUS "NOW USING RPI TOOLCHAIN")
+#     # Find Python for cross-compilation
+#     find_package(Python3 REQUIRED COMPONENTS Development)
+# endif()
 
 message(STATUS "Python3 version: ${Python3_VERSION}")
 message(STATUS "Python3 executable: ${Python3_EXECUTABLE}")

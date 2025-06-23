@@ -20,14 +20,14 @@ TARGET_BOARD=$(<.last_target_board)
 # Optional second argument: make target (e.g., --clean)
 MAKE_TARGET=$1
 
-TOOLCHAIN_FILE="toolchains/toolchain_$TARGET_ARCH.cmake"
+# TOOLCHAIN_FILE="toolchains/toolchain_$TARGET_ARCH.cmake"
 BUILD_DIR="build/$TARGET_ARCH/$TARGET_BOARD"
 
-# Check if toolchain file exists
-if [[ ! -f "$TOOLCHAIN_FILE" ]]; then
-    echo "Error: Toolchain file '$TOOLCHAIN_FILE' does not exist."
-    exit 1
-fi
+# # Check if toolchain file exists
+# if [[ ! -f "$TOOLCHAIN_FILE" ]]; then
+#     echo "Error: Toolchain file '$TOOLCHAIN_FILE' does not exist."
+#     exit 1
+# fi
 
 # Check if build directory exists
 if [[ ! -d "$BUILD_DIR" ]]; then
@@ -40,7 +40,7 @@ cd "$BUILD_DIR"
 # Only configure with CMake if not already done
 if [[ ! -f Makefile ]]; then
     echo "Running CMake configuration for target: $TARGET_ARCH-$TARGET_BOARD"
-    cmake ../../../ -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_FILE 
+    cmake ../../../ 
     # -DENABLE_ASAN=ON
 fi
 
